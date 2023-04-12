@@ -52,19 +52,17 @@ void setup() {
 
 }
 
-void getPulseOxSensorInfo() {
+void getPulseOxSensorInfo(PulseOximeter pox1) {
    // Read from the sensor
-  pox.update();
+  
 
   // Grab the updated heart rate and SpO2 levels
-  if (millis() - tsLastReport > REPORTING_PERIOD_MS) {
       Serial.print("Heart rate:");
-      Serial.print(pox.getHeartRate());
+      Serial.print(pox1.getHeartRate());
       Serial.print("bpm / SpO2:");
-      Serial.print(pox.getSpO2());
+      Serial.print(pox1.getSpO2());
       Serial.println("%");
-      tsLastReport = millis();
-  }
+    
 }
 
 void getGsrSensorInfo() {
@@ -80,17 +78,22 @@ void getGsrSensorInfo() {
 }
 
 void getTemperatureSensorInfo() {
+  
     Serial.print("Ambient = "); Serial.print(mlx.readAmbientTempC());
-	Serial.print("*C\tObject = "); Serial.print(mlx.readObjectTempC()); Serial.println("*C");
-	Serial.print("Ambient = "); Serial.print(mlx.readAmbientTempF());
-	Serial.print("*F\tObject = "); Serial.print(mlx.readObjectTempF()); Serial.println("*F");
-	Serial.println();
+	  Serial.print("*C\tObject = "); Serial.print(mlx.readObjectTempC()); Serial.println("*C");
+	  Serial.print("Ambient = "); Serial.print(mlx.readAmbientTempF());
+	  Serial.print("*F\tObject = "); Serial.print(mlx.readObjectTempF()); Serial.println("*F");
+	  Serial.println();
 }
 
 void loop() {
-  getPulseOxSensorInfo();
-  getGsrSensorInfo();
-  getTemperatureSensorInfo();
+  pox.update();
+  if (millis() - tsLastReport > REPORTING_PERIOD_MS) {
+    getPulseOxSensorInfo(pox);
+    getGsrSensorInfo();
+    getTemperatureSensorInfo();
+    tsLastReport = millis();
+  }
 
-  delay(500);
+  
 }
